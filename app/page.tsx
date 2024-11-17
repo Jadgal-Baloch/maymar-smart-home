@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { ref, get, update, onValue } from "firebase/database";
+import { DataSnapshot } from "firebase/database";
+
 import { database } from "./utiles/firebase";
 
 type DeviceState = {
@@ -20,7 +22,7 @@ export default function Component() {
   });
 
   useEffect(() => {
-    const devicesRef = ref(database, 'SmartHome');
+    const devicesRef = ref(database, "SmartHome");
 
     const fetchDeviceStates = async () => {
       try {
@@ -35,13 +37,13 @@ export default function Component() {
           });
         }
       } catch (error) {
-        console.error('Error fetching device states:', error);
+        console.error("Error fetching device states:", error);
       }
     };
 
     fetchDeviceStates();
 
-    const unsubscribe = onValue(devicesRef, (snapshot: any) => {
+    const unsubscribe = onValue(devicesRef, (snapshot: DataSnapshot) => {
       if (snapshot.exists()) {
         const deviceData = snapshot.val();
         setDevices({
@@ -65,11 +67,11 @@ export default function Component() {
     }));
 
     try {
-      const devicesRef = ref(database, 'SmartHome');
+      const devicesRef = ref(database, "SmartHome");
       const snapshot = await get(devicesRef);
 
       if (snapshot.exists() && snapshot.val()[device] !== undefined) {
-        await update(ref(database, 'SmartHome'), {
+        await update(ref(database, "SmartHome"), {
           [device]: newState,
         });
       } else {
@@ -80,7 +82,7 @@ export default function Component() {
         }));
       }
     } catch (error) {
-      console.error('Error updating device state:', error);
+      console.error("Error updating device state:", error);
       setDevices((prev) => ({
         ...prev,
         [device]: !newState,
@@ -99,7 +101,7 @@ export default function Component() {
             </h1>
           </div>
           <nav className="hidden md:flex space-x-4">
-            {['Dashboard', 'Devices', 'Settings'].map((item) => (
+            {["Dashboard", "Devices", "Settings"].map((item) => (
               <button
                 key={item}
                 className="px-4 py-2 rounded-lg border border-white border-opacity-10 hover:bg-white hover:bg-opacity-10 transition-all duration-300 ease-in-out"
@@ -113,27 +115,32 @@ export default function Component() {
 
       <main className="flex-grow p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {[{
-            name: 'Bedroom1 Bulb',
-            icon: '💡',
-            relay: 'relay1',
-            room: 'Bedroom 1'
-          }, {
-            name: 'Bedroom1 Fan',
-            icon: '✇🌫',
-            relay: 'relay2',
-            room: 'Bedroom 1'
-          }, {
-            name: 'Bedroom2 Bulb',
-            icon: '💡',
-            relay: 'relay3',
-            room: 'Bedroom 2'
-          }, {
-            name: 'Bedroom2 Fan',
-            icon: '✇🌫',
-            relay: 'relay4',
-            room: 'Bedroom 2'
-          }].map((device) => (
+          {[
+            {
+              name: "Bedroom1 Bulb",
+              icon: "💡",
+              relay: "relay1",
+              room: "Bedroom 1",
+            },
+            {
+              name: "Bedroom1 Fan",
+              icon: "✇🌫",
+              relay: "relay2",
+              room: "Bedroom 1",
+            },
+            {
+              name: "Bedroom2 Bulb",
+              icon: "💡",
+              relay: "relay3",
+              room: "Bedroom 2",
+            },
+            {
+              name: "Bedroom2 Fan",
+              icon: "✇🌫",
+              relay: "relay4",
+              room: "Bedroom 2",
+            },
+          ].map((device) => (
             <div
               key={`${device.name}-${device.relay}`}
               className="bg-gray-800 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-700"
@@ -146,7 +153,9 @@ export default function Component() {
                   type="checkbox"
                   className="sr-only peer"
                   checked={devices[device.relay as keyof DeviceState]}
-                  onChange={() => toggleDevice(device.relay as keyof DeviceState)}
+                  onChange={() =>
+                    toggleDevice(device.relay as keyof DeviceState)
+                  }
                 />
                 <div className="w-14 h-7 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
